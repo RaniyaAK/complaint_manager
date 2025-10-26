@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from django.contrib.auth.decorators import login_required
 
+
+
 def register(request):
     if request.method == 'POST':
         username = request.POST['username']
@@ -53,6 +55,10 @@ def admin_dashboard(request):
 @login_required(login_url='login')
 def user_dashboard(request):
     return render(request, 'user_dashboard.html', {"username": request.user.username})
+
+
+
+
 
 @login_required
 def logout_view(request):
