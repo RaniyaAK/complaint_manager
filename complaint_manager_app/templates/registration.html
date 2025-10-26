@@ -1,0 +1,25 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}   
+    <div class="register">
+        <h1>Create Account</h1>
+        {% if error %}
+         <p class="error_messages">{{ error }}</p>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+            <button type="submit">Signup</button>
+        </form>
+        <span class="link">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </span>
+    </div>
+{% endblock %}

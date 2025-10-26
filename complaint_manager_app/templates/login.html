@@ -1,0 +1,30 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}{% endblock %}
+
+
+{% block content %}
+<div class="login" >
+    <h1>Login</h1>
+    {% if error %}
+      <p class="error_message">{{ error }}</p>
+    {% endif %}
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+                
+         <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+        <span class="link">
+            Don't have an account?<a href="{% url 'register' %}"> Signup</a>
+        </span>
+</div>
+
+
+    </form>
+</div>
+{% endblock %}
+             
+           
