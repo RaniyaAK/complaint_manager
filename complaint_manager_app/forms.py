@@ -27,7 +27,7 @@ class UserForm(forms.ModelForm):
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-    
+
 
 class ComplaintForm(forms.ModelForm):
     class Meta:
@@ -43,3 +43,15 @@ class ComplaintForm(forms.ModelForm):
             'description': 'Description'
         }
 
+
+class UpdateForm(forms.ModelForm):
+    class Meta:
+        model = Complaint
+        fields = ['subject', 'description']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+        labels = {
+            'subject': 'Subject',
+            'description': 'Description'
+        }

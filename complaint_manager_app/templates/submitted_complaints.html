@@ -1,0 +1,49 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Submitted Complaints{% endblock %}
+
+{% block content %}
+
+
+<h1>Submitted Complaints</h1>
+
+<div class="container">
+    <table id="complaintstable">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>subject</th>
+                <th>description</th>
+                <th>Status</th>
+                <th>Created at</th>
+                <th>updated at</th>
+                <th>action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for x in mycomplaints %}
+        <tr data-id="{{ x.id }}" draggable="true">
+
+            <td>{{ x.id }}</td>
+            <td>{{ x.subject }}</td>
+            <td>{{ x.description }}</td>
+            <td>{{ x.status }}</td>
+            <td>{{ x.created_at }}</td>
+            <td>{{ x.updated_at }}</td>
+            <td>
+             <a href="{% url 'update_complaint' x.id  %}" class="update_btn" >Update</a>
+            </td>
+
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" style="text-align:center;">No complaints submitted</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock %}

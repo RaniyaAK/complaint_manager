@@ -1,0 +1,44 @@
+
+
+{% extends "master.html" %}
+
+{% load static %}
+
+{% block title %}
+  My To do List
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1>Update Complaint</h1>
+      <form action = "{% url 'update_complaint' complaint.id %}" method="post">
+        {% csrf_token %}
+
+      <div class="content container">
+          <label>subject</label>
+          <input type = "text" name="task" value="{{complaint.subject}}">
+          <br><br>
+      </div>
+
+      <div class="content container">
+          <label>Description</label>
+          <input type = "text" name="task" value="{{complaint.description}}">
+          <br><br>
+      </div>
+
+
+
+
+      <div class="buttons container">
+            <button class="update_btn" type="submit">Update</button>
+            <button class="cancel_btn" type="reset">Cancel</button>
+      </div>
+
+      </form>
+  </div>
+</div>
+      
+
+
+{% endblock %}

@@ -13,6 +13,7 @@ urlpatterns = [
     path('complaint_registration_form/', views.complaint_registration_form,name="complaint_registration_form"),
     path('all_complaints/', views.all_complaints,name="all_complaints"),
     path('submitted_complaints/', views.submitted_complaints,name="submitted_complaints"),
+    path('update_complaint/<int:id>/', views.update_complaint,name="update_complaint"),
 
     path('forgot_password/', views.forgot_password,name="forgot_password"),
     path('reset_password/<str:email>/', views.reset_password,name="reset_password"),

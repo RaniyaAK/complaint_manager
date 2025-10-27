@@ -1,9 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import ComplaintForm,LoginForm
+from .forms import ComplaintForm,LoginForm,UpdateForm
 from .models import Complaint
 
 
@@ -92,14 +92,10 @@ def logout_view(request):
     auth_logout(request)
     return redirect('login')
 
-
+# admin
 @login_required
 def admin_dashboard(request):
     return render(request, 'admin_dashboard.html', {"username": request.user.username})
-
-@login_required(login_url='login')
-def user_dashboard(request):
-    return render(request, 'user_dashboard.html', {"username": request.user.username})
 
 
 @login_required(login_url='login')
@@ -107,10 +103,11 @@ def all_complaints(request):
     return render(request, 'all_complaints.html', {"username": request.user.username})
 
 
-
+# user
 @login_required(login_url='login')
-def submitted_complaints(request):
-    return render(request, 'submitted_complaints.html', {"username": request.user.username})
+def user_dashboard(request):
+    return render(request, 'user_dashboard.html', {"username": request.user.username})
+
 
 
 @login_required
@@ -132,5 +129,27 @@ def complaint_registration_form(request):
         'form': form,
         'message': message
     })
+
+@login_required
+def submitted_complaints(request):
+    mycomplaints = Complaint.objects.filter(user=request.user)
+    return render(request, 'submitted_complaints.html', {"mycomplaints": mycomplaints})
+
+
+@login_required
+
+def update_complaint(request,id):
+    complaint = get_object_or_404(Complaint , id=id, user=request.user)
+    if request.method == 'POST':
+        form = UpdateForm(request.POST,instance=complaint)
+        if form.is_valid():
+            form.save()
+            print("Updated")
+        else:
+            print(form.errors)
+        return redirect('submitted_complaints')
+    else:
+        form = UpdateForm(instance=complaint)
+    return render(request, 'update_complaint.html', {'username': request.user.username,'complaint': complaint,'form':form })
 
 
