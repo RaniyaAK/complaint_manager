@@ -15,8 +15,8 @@ class Complaint(models.Model):
     email = models.EmailField(max_length=100)
     subject = models.CharField(max_length=100)
     description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
     status= models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending') 
 
 

@@ -18,7 +18,6 @@
                 <th>Status</th>
                 <th>Created at</th>
                 <th>updated at</th>
-                <th>action</th>
             </tr>
         </thead>
         <tbody>
@@ -31,9 +30,7 @@
             <td>{{ x.status }}</td>
             <td>{{ x.created_at }}</td>
             <td>{{ x.updated_at }}</td>
-            <td>
-             <a href="{% url 'update_complaint' x.id  %}" class="update_btn" >Update</a>
-            </td>
+
 
         </tr>
         {% empty %}

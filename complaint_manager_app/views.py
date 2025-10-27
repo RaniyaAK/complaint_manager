@@ -30,7 +30,7 @@ def register(request):
     return render(request, 'registration.html')
 
 
-def login(request):
+def login_view(request):
     error_message = None
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -42,14 +42,16 @@ def login(request):
             if user is not None:
               auth_login(request, user)
               if user.is_superuser:
-                 return redirect('admin_dashboard')
+                return redirect('admin_dashboard')
               else:
-                 return redirect('user_dashboard')
+                return redirect('user_dashboard')
+            else:
+                error_message = 'Invalid username or password'
         else:
-            return render(request, 'login.html', {'error': 'Invalid username or password'})
+                error_message = 'Invalid username or password'        
     else:
         form = LoginForm()
-    return render(request, 'login.html',{'form':form, 'error':error_message})
+    return render(request, 'login.html',{'form':form, 'error_message':error_message})
 
 
 # passwords
@@ -120,8 +122,8 @@ def complaint_registration_form(request):
             complaint = form.save(commit = False)
             complaint.user = request.user
             complaint.save()
-            message = "Submitted successfully!"
-            form = ComplaintForm()  
+            return redirect('success')
+
     else:
         form = ComplaintForm()
 
@@ -152,4 +154,9 @@ def update_complaint(request,id):
         form = UpdateForm(instance=complaint)
     return render(request, 'update_complaint.html', {'username': request.user.username,'complaint': complaint,'form':form })
 
+
+# user
+@login_required(login_url='login')
+def success(request):
+    return render(request, 'success.html', {"username": request.user.username})
 
