@@ -5,9 +5,12 @@
 
 {% block content %}
 
-<a href="{% url 'login' %}" class="back-arrow">←</a>
+
+<a href="{% url 'logout' %}" class="logout-link">Logout</a>
 
 
-<a href="#">Complaints</a>
+
+<a href="{% url 'all_complaints' %}">Complaints</a>
+<a href="{% url 'complaints_list' %}">Complaints</a>
 
 {% endblock%}

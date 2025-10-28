@@ -3,7 +3,13 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import ComplaintForm,LoginForm,UpdateForm
+from .forms import ComplaintForm,LoginForm
+from .models import Complaint
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
+from django.shortcuts import render
 from .models import Complaint
 
 
@@ -94,11 +100,16 @@ def logout_view(request):
     auth_logout(request)
     return redirect('login')
 
-# admin
 @login_required
 def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html', {"username": request.user.username})
-
+    if request.user.is_superuser:
+        complaints = Complaint.objects.all().order_by('-created_at')
+        return render(request, 'admin_dashboard.html', {
+            'username': request.user.username,
+            'mycomplaints': complaints
+        })
+    else:
+        return redirect('user_dashboard')
 
 @login_required(login_url='login')
 def all_complaints(request):
@@ -137,22 +148,10 @@ def submitted_complaints(request):
     mycomplaints = Complaint.objects.filter(user=request.user)
     return render(request, 'submitted_complaints.html', {"mycomplaints": mycomplaints})
 
-
 @login_required
-
-def update_complaint(request,id):
-    complaint = get_object_or_404(Complaint , id=id, user=request.user)
-    if request.method == 'POST':
-        form = UpdateForm(request.POST,instance=complaint)
-        if form.is_valid():
-            form.save()
-            print("Updated")
-        else:
-            print(form.errors)
-        return redirect('submitted_complaints')
-    else:
-        form = UpdateForm(instance=complaint)
-    return render(request, 'update_complaint.html', {'username': request.user.username,'complaint': complaint,'form':form })
+def all_complaints(request):
+    mycomplaints = Complaint.objects.all()  # all complaints for admin
+    return render(request, 'all_complaints.html', {'mycomplaints': mycomplaints})
 
 
 # user
@@ -160,3 +159,36 @@ def update_complaint(request,id):
 def success(request):
     return render(request, 'success.html', {"username": request.user.username})
 
+
+
+@csrf_exempt
+@login_required
+def update_status(request, complaint_id):
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+        try:
+            complaint = Complaint.objects.get(id=complaint_id)
+            complaint.status = new_status
+            complaint.save()  # This will automatically update `updated_at`
+
+            return JsonResponse({
+                "success": True,
+                "new_status": complaint.status,
+                "updated_at": complaint.updated_at.strftime("%b %d, %Y %H:%M"),
+            })
+        except Complaint.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Complaint not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+@login_required
+def complaints_list(request):
+    # Fetch all complaints (only subject & description shown)
+    complaints = Complaint.objects.all().order_by('-id')  # latest first
+
+    # Pagination setup (5 complaints per page)
+    paginator = Paginator(complaints, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'complaints_list.html', {'page_obj': page_obj})

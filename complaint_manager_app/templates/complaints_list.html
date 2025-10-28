@@ -1,0 +1,31 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}Complaints{% endblock %}
+
+{% block content %}
+<a href="{% url 'admin_dashboard' %}" class="back-arrow">←</a>
+
+<h1>Complaints</h1>
+
+<div class="complaint-card" style="max-width:600px; margin:20px auto; padding:20px; border:1px solid #ddd; border-radius:10px;">
+    {% for x in page_obj %}
+        <h2>{{ x.subject }}</h2>
+        <p>{{ x.description }}</p>
+    {% empty %}
+        <p style="text-align:center;">No complaints found.</p>
+    {% endfor %}
+</div>
+
+<div class="pagination" style="text-align:center; margin-top:20px;">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}">← </a>
+    {% endif %}
+
+    <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"> →</a>
+    {% endif %}
+</div>
+{% endblock %}

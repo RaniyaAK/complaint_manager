@@ -32,7 +32,7 @@ class LoginForm(forms.Form):
 class ComplaintForm(forms.ModelForm):
     class Meta:
         model = Complaint
-        fields = ['name', 'email','subject', 'description']
+        fields = ['name', 'email', 'subject', 'description']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
         }
@@ -40,8 +40,14 @@ class ComplaintForm(forms.ModelForm):
             'name': 'Name',
             'email': 'Email',
             'subject': 'Subject',
-            'description': 'Description'
+            'description': 'Description',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 
 class UpdateForm(forms.ModelForm):

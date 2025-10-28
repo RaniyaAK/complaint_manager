@@ -1,0 +1,146 @@
+{% extends "master.html" %}
+{% load static %}
+
+{% block title %}All Complaints{% endblock %}
+
+{% block content %}
+
+<a href="{% url 'admin_dashboard' %}" class="back-arrow">←</a>
+
+<h1>Complaints</h1>
+
+<div class="container">
+    <!-- CSRF token for AJAX -->
+    <form id="csrf-form">{% csrf_token %}</form>
+
+    <table id="complaintstable">
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Subject</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for x in mycomplaints %}
+        <tr data-id="{{ x.id }}">
+            <td>{{ x.id }}</td>
+            <td>{{ x.name }}</td>
+            <td>{{ x.email }}</td>
+            <td>{{ x.subject }}</td>
+            <td>{{ x.description }}</td>
+
+            <td>
+                <select class="status-dropdown" data-id="{{ x.id }}">
+                    <option value="Pending" {% if x.status == 'Pending' %}selected{% endif %}>Pending</option>
+                    <option value="In Progress" {% if x.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                    <option value="Resolved" {% if x.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                </select>
+            </td>
+
+            <td>{{ x.created_at }}</td>
+            <td>{{ x.updated_at }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8" style="text-align:center;">No complaints submitted</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    /* Optional styling for table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+    }
+    th {
+        background-color: #f4f4f4;
+    }
+
+    /* Color for each status */
+    .status-dropdown {
+        padding: 5px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .status-pending {
+        background-color: #fff3cd; /* yellow */
+        color: #856404;
+    }
+    .status-in-progress {
+        background-color: #cce5ff; /* blue */
+        color: #004085;
+    }
+    .status-resolved {
+        background-color: #d4edda; /* green */
+        color: #155724;
+    }
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+  // Function to apply color based on status
+  function applyStatusColor(dropdown) {
+    dropdown.classList.remove('status-pending', 'status-in-progress', 'status-resolved');
+    const value = dropdown.value;
+    if (value === 'Pending') dropdown.classList.add('status-pending');
+    if (value === 'In Progress') dropdown.classList.add('status-in-progress');
+    if (value === 'Resolved') dropdown.classList.add('status-resolved');
+  }
+
+  // Apply initial colors
+  document.querySelectorAll(".status-dropdown").forEach(applyStatusColor);
+
+  // Handle change event
+  document.querySelectorAll(".status-dropdown").forEach(dropdown => {
+    dropdown.addEventListener("change", function() {
+      const complaintId = this.getAttribute("data-id");
+      const newStatus = this.value;
+      applyStatusColor(this);
+
+      const url = "{% url 'update_status' 0 %}".replace("0", complaintId);
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": csrftoken,
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `status=${newStatus}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const updatedAtCell = document.querySelector(`tr[data-id='${complaintId}'] td:last-child`);
+          if (updatedAtCell) updatedAtCell.textContent = data.updated_at;
+          alert("✅ Status updated to: " + data.new_status);
+        } else {
+          alert("❌ Failed to update status: " + (data.error || "Unknown error"));
+        }
+      })
+      .catch(err => {
+        console.error("Error:", err);
+        alert("⚠️ Something went wrong while updating status.");
+      });
+    });
+  });
+});
+</script>
+
+{% endblock %}

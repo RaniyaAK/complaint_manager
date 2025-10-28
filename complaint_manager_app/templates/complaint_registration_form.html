@@ -1,39 +1,122 @@
 {% extends 'master.html' %}
+{% load static %}
 
 {% block title %}Complaint Registration Form{% endblock %}
 
 {% block content %}
+<style>
+    body {
+        background-color: #f4f6f9; /* light government gray */
+    }
+
+    .back-arrow {
+        font-size: 1.8rem;
+        color: #0d47a1; /* dark navy blue */
+        text-decoration: none;
+        font-weight: bold;
+        margin-left: 30px;
+        margin-top: 20px;
+        display: inline-block;
+    }
+
+    .back-arrow:hover {
+        color: #002171;
+    }
+
+    .card {
+        max-width: 700px;
+        margin: 50px auto;
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+        background-color: #ffffff;
+    }
+
+    .card-header {
+        background-color: #0d47a1; /* government blue */
+        color: white;
+        text-align: center;
+        padding: 20px;
+        font-size: 1.3rem;
+        font-weight: 500;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    label {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        box-shadow: none;
+    }
+
+    .btn-primary {
+        background-color: #1565c0;
+        border-color: #1565c0;
+        font-weight: 500;
+    }
+
+    .btn-primary:hover {
+        background-color: #0d47a1;
+        border-color: #0d47a1;
+    }
+
+    .btn-secondary {
+        background-color: #b0bec5;
+        border-color: #b0bec5;
+        color: #263238;
+    }
+
+    .btn-secondary:hover {
+        background-color: #90a4ae;
+        border-color: #90a4ae;
+    }
+</style>
 
 <a href="{% url 'user_dashboard' %}" class="back-arrow">←</a>
 
-<div class="dashboard-content">
-    
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            Complaint Registration Form
+        </div>
 
-    <div class="complaint-form-container">
-        <h2>Complaint Registration Form</h2>
-        {% if messages %}
-               <div class="success-message">{{ message }}</div>
-         
-        {% endif %}
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
 
-            {% for field in form %}
-                <div class="form-field">
-                    {{ field.label_tag }}
-                    {{ field }}
-                    {% for error in field.errors %}
-                        <div class="field-errors">{{ error }}</div>
-                    {% endfor %}
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger mt-3">{{ error }}</div>
+                {% endfor %}
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="reset" class="btn btn-secondary me-2">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
-            {% endfor %}
-
-            {% for error in form.non_field_errors %}
-                <div class="field-errors">{{ error }}</div>
-            {% endfor %}
-            <button class="cancel_btn" type="reset">Cancel</button>
-            <button type="submit">Submit</button>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
