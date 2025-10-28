@@ -4,39 +4,87 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="login-register-box container">  
-    <h1>Login</h1>
+<div class="login-page d-flex align-items-center justify-content-center" 
+     style="min-height: 100vh; background-color: #f7f8fa;">
 
-    {% if error_message %}
-        <p class="error-text">{{ error }}</p>
-    {% endif %}
+  <div class="login-container text-center">
 
-    {% if error_message %}
-        <p class="error-text">{{ error_message }}</p>
-    {% endif %}
+    <!-- Login Card -->
+    <div class="login-box shadow-lg p-5 bg-white rounded-4 mb-4" 
+         style="width: 380px; border-top: 6px solid #003366; margin: 0 auto;">
+      <h1 class="mb-4 fw-bold" style="color:#003366;">Login</h1>
 
-    <form action="{% url 'login' %}" method="post">
+      {% if error or error_message %}
+      <div class="alert alert-danger py-2">
+        {{ error|default:error_message }}
+      </div>
+      {% endif %}
+
+      <form action="{% url 'login' %}" method="post">
         {% csrf_token %}
-        {{form.as_p}}
-
-        <div class="forgot-password">
-              <a href="{% url 'forgot_password' %}">Forgot Password?</a>
+        <div class="mb-3 text-start">
+          {{ form.username.label_tag }}
+          {{ form.username }}
+        </div>
+        <div class="mb-3 text-start">
+          {{ form.password.label_tag }}
+          {{ form.password }}
         </div>
 
-        <div>
-            <button type="submit" class="login-register-btn">Login</button>
+        <div class="text-end mb-3">
+          <a href="{% url 'forgot_password' %}" class="text-decoration-none" style="color:#003366;">
+            Forgot Password?
+          </a>
         </div>
-    </form>
 
-    <span class="login-register-link">
-        Don't have an account? <a href="{% url 'register' %}">Sign up</a>
-    </span>
-</div>
-<div class="admin-box">
-        <h3>Admin Credentials</h3>
-        <p><strong>Username:</strong> admin</p>
-        <p><strong>Password:</strong> heyyy123</p>
+        <div class="d-grid mb-3">
+          <button type="submit" class="btn btn-primary fw-semibold" 
+                  style="background-color:#003366; border:none;">
+            Login
+          </button>
+        </div>
+      </form>
+
+      <div class="mt-3">
+        <span>Don't have an account? 
+          <a href="{% url 'register' %}" class="fw-semibold" style="color:#003366;">Sign up</a>
+        </span>
+      </div>
+    </div>
+
+    <!-- Admin Credentials Box -->
+    <div class="admin-box shadow-sm p-4 bg-white rounded-4" 
+         style="width: 380px; border-left: 6px solid #003366; margin: 0 auto;">
+      <h4 class="fw-bold mb-3 text-center" style="color:#003366;">Admin Credentials</h4>
+      <p><strong>Username:</strong> admin</p>
+      <p><strong>Password:</strong> heyyy123</p>
+    </div>
+  </div>
 </div>
 
+<style>
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #003366;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 51, 102, 0.1);
+  }
+
+  .login-box, .admin-box {
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
 
 {% endblock %}

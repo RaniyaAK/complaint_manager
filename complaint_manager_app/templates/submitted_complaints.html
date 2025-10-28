@@ -1,113 +1,76 @@
 {% extends "master.html" %}
 {% load static %}
 
-{% block title %}Submitted Complaints{% endblock %}
+{% block title %}Complaint Status{% endblock %}
 
 {% block content %}
 
-<!-- Back Arrow -->
-<a href="{% url 'user_dashboard' %}" 
-   class="text-decoration-none fs-4 fw-bold position-absolute" 
-   style="top: 20px; left: 30px; color: #5a3825;">
-    ←
-</a>
+<a href="{% url 'user_dashboard' %}" class="back-arrow">←</a>
 
-<div class="container mt-5">
-    <div class="card shadow-lg border-0" style="background-color: #faf7f2;">
-        <div class="card-header text-center text-white" 
-             style="background-color: #5a3825;">
-            <h3 class="mb-0">Submitted Complaints</h3>
-        </div>
-
-        <div class="card-body">
-            {% if mycomplaints %}
-                <div class="table-responsive">
-                    <table class="table table-bordered align-middle text-center">
-                        <thead class="table-light">
-                            <tr>
-                                <th>No.</th>
-                                <th>Subject</th>
-                                <th>Description</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th>Updated At</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for x in mycomplaints %}
-                            <tr data-id="{{ x.id }}">
-                                <td>{{ x.id }}</td>
-                                <td>{{ x.subject }}</td>
-                                <td>{{ x.description }}</td>
-                                <td class="
-                                    {% if x.status|lower == 'pending' %}status-pending{% endif %}
-                                    {% if x.status|lower == 'in progress' or x.status|lower == 'in_progress' %}status-in-progress{% endif %}
-                                    {% if x.status|lower == 'resolved' %}status-resolved{% endif %}
-                                ">
-                                    {{ x.status }}
-                                </td>
-                                <td>{{ x.created_at }}</td>
-                                <td>{{ x.updated_at }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <div class="alert alert-warning text-center mt-3">
-                    No complaints submitted yet.
-                </div>
-            {% endif %}
-        </div>
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow border-0 w-100" style="max-width: 900px;">
+    <div class="card-header text-white text-center py-3" style="background-color: #1d3557;">
+      <h4 class="mb-0 fw-semibold">Complaint Status Tracker</h4>
     </div>
+
+    <div class="card-body bg-light">
+      <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th>No.</th>
+              <th>Subject</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for x in mycomplaints %}
+            <tr>
+              <td>{{ x.id }}</td>
+              <td>{{ x.subject }}</td>
+              <td class="text-start">{{ x.description }}</td>
+
+              <td class="
+                {% if x.status|lower == 'pending' %}bg-warning text-dark fw-bold{% endif %}
+                {% if x.status|lower == 'in progress' or x.status|lower == 'in_progress' %}bg-info text-white fw-bold{% endif %}
+                {% if x.status|lower == 'resolved' %}bg-success text-white fw-bold{% endif %}
+              ">
+                {{ x.status }}
+              </td>
+
+              <td>{{ x.created_at }}</td>
+              <td>{{ x.updated_at }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-muted">No complaints submitted</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- Inline Styling -->
 <style>
-/* Background theme colors */
 body {
-    background-color: #eae6df;
+  background-color: #f1f3f6;
 }
 
-/* Table colors for statuses */
-.status-pending {
-    background-color: #fff3cd !important; /* yellow */
-    color: #856404;
-    font-weight: 600;
-    border-radius: 5px;
-}
-.status-in-progress {
-    background-color: #cce5ff !important; /* blue */
-    color: #004085;
-    font-weight: 600;
-    border-radius: 5px;
-}
-.status-resolved {
-    background-color: #d4edda !important; /* green */
-    color: #155724;
-    font-weight: 600;
-    border-radius: 5px;
+.back-arrow {
+  position: absolute;
+  top: 20px;
+  left: 25px;
+  font-size: 2rem;
+  color: #1d3557;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-/* Table look */
-.table th {
-    background-color: #f8f9fa;
-    color: #5a3825;
-    font-weight: bold;
-}
-
-.table td, .table th {
-    vertical-align: middle;
-}
-
-/* Page spacing */
-h3 {
-    font-weight: 600;
-}
-
-/* Back arrow hover */
-a.back-arrow:hover, .text-decoration-none:hover {
-    color: #3b2418 !important;
+.back-arrow:hover {
+  color: #0b1d33;
 }
 </style>
 

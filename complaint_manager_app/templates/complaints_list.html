@@ -4,28 +4,68 @@
 {% block title %}Complaints{% endblock %}
 
 {% block content %}
-<a href="{% url 'admin_dashboard' %}" class="back-arrow">←</a>
+<!-- Back Arrow (top-left corner) -->
+<a href="{% url 'admin_dashboard' %}" 
+   class="text-decoration-none text-dark fs-4 position-absolute top-0 start-0 m-4"
+   style="font-weight: bold;">←</a>
 
-<h1>Complaints</h1>
+<!-- Centered Content -->
+<div class="d-flex flex-column align-items-center justify-content-center py-5" style="min-height: 100vh;">
 
-<div class="complaint-card" style="max-width:600px; margin:20px auto; padding:20px; border:1px solid #ddd; border-radius:10px;">
-    {% for x in page_obj %}
-        <h2>{{ x.subject }}</h2>
-        <p>{{ x.description }}</p>
-    {% empty %}
-        <p style="text-align:center;">No complaints found.</p>
-    {% endfor %}
-</div>
+  <!-- Heading -->
+  <h1 class="fw-bold mb-5 text-primary" style="color:#003366;">Registered Complaints</h1>
 
-<div class="pagination" style="text-align:center; margin-top:20px;">
+  <!-- Complaints Container -->
+  <div class="w-100 d-flex flex-column align-items-center">
+    {% if page_obj %}
+      {% for x in page_obj %}
+      <div class="card shadow-sm mb-4" style="width: 700px; border-left: 5px solid #003366; border-radius: 10px;">
+        <div class="card-body">
+          <h5 class="card-title text-primary fw-semibold">{{ x.subject }}</h5>
+          <p class="card-text text-secondary mb-3">{{ x.description }}</p>
+          <p class="text-muted mb-0">
+            <small><strong>Submitted on:</strong> {{ x.created_at|date:"M d, Y" }}</small>
+          </p>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-center text-muted">No complaints found.</p>
+    {% endif %}
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-center align-items-center mt-4 fs-5">
     {% if page_obj.has_previous %}
-        <a href="?page={{ page_obj.previous_page_number }}">← </a>
+      <a href="?page={{ page_obj.previous_page_number }}" class="text-decoration-none text-primary me-4">←</a>
     {% endif %}
-
-    <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-
+    <span class="fw-semibold text-dark">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
     {% if page_obj.has_next %}
-        <a href="?page={{ page_obj.next_page_number }}"> →</a>
+      <a href="?page={{ page_obj.next_page_number }}" class="text-decoration-none text-primary ms-4">→</a>
     {% endif %}
+  </div>
+
 </div>
+
+<style>
+  body {
+    background-color: #f9fafb;
+  }
+  h1 {
+    color: #003366 !important; /* government blue */
+  }
+  a {
+    transition: color 0.2s ease-in-out;
+  }
+  a:hover {
+    color: #001f4d !important;
+  }
+  .card {
+    transition: transform 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+  }
+</style>
+
 {% endblock %}

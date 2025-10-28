@@ -1,13 +1,41 @@
 {% extends 'master.html' %}
+{% load static %}
 
 {% block title %}User Dashboard{% endblock %}
 
 {% block content %}
+<div class="container-fluid position-relative min-vh-100 d-flex flex-column justify-content-center align-items-center" style="background: linear-gradient(135deg, #e8f1fb, #cfe2ff);">
 
-<a href="{% url 'logout' %}" class="logout-link">Logout</a>
+    <!-- Logout Button (top-right) -->
+    <a href="{% url 'logout' %}" class="btn btn-outline-danger position-absolute top-0 end-0 m-3">
+        Logout
+    </a>
 
+    <!-- Main Card -->
+    <div class="card shadow-lg p-5 text-center" style="max-width: 500px; width: 100%; background-color: #f8f9fa; border-top: 5px solid #0d6efd;">
+        <div class="d-grid gap-3">
+            <a href="{% url 'complaint_registration_form' %}" class="btn btn-primary btn-lg">
+                📝 Register a New Complaint
+            </a>
+            <a href="{% url 'submitted_complaints' %}" class="btn btn-success btn-lg">
+                📋 View Submitted Complaints
+            </a>
+        </div>
+    </div>
 
-<a href="{% url 'complaint_registration_form' %}">Complaint Registration Form</a>
-<a href="{% url 'submitted_complaints' %}">Submitted complaints</a>
+</div>
 
-{% endblock%}
+<style>
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+.btn-success {
+    background-color: #198754;
+    border-color: #198754;
+}
+.btn-primary:hover, .btn-success:hover {
+    opacity: 0.9;
+}
+</style>
+{% endblock %}

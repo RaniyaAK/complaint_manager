@@ -5,97 +5,163 @@
 
 {% block content %}
 
+<!-- Back Arrow -->
 <a href="{% url 'admin_dashboard' %}" class="back-arrow">←</a>
 
-<h1>Complaints</h1>
+<div class="page-wrapper d-flex align-items-center justify-content-center min-vh-100">
+  <div class="content-box text-center p-4 rounded shadow-lg bg-white">
 
-<div class="container">
-    <!-- CSRF token for AJAX -->
-    <form id="csrf-form">{% csrf_token %}</form>
+    <h1 class="fw-bold mb-4" style="color:#003366;">Public Complaint Management</h1>
+    <hr class="mx-auto" style="width:250px; border:2px solid #ffcc00;">
 
-    <table id="complaintstable">
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Subject</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-            </tr>
+    <div class="table-container mt-4">
+      <form id="csrf-form">{% csrf_token %}</form>
+
+      <table id="complaintstable" class="table table-bordered align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Complainant</th>
+            <th>Email</th>
+            <th>Subject</th>
+            <th>Details</th>
+            <th>Current Status</th>
+            <th>Submitted On</th>
+            <th>Last Updated</th>
+          </tr>
         </thead>
         <tbody>
-        {% for x in mycomplaints %}
-        <tr data-id="{{ x.id }}">
+          {% for x in mycomplaints %}
+          <tr data-id="{{ x.id }}">
             <td>{{ x.id }}</td>
             <td>{{ x.name }}</td>
             <td>{{ x.email }}</td>
             <td>{{ x.subject }}</td>
-            <td>{{ x.description }}</td>
-
-            <td>
-                <select class="status-dropdown" data-id="{{ x.id }}">
-                    <option value="Pending" {% if x.status == 'Pending' %}selected{% endif %}>Pending</option>
-                    <option value="In Progress" {% if x.status == 'In Progress' %}selected{% endif %}>In Progress</option>
-                    <option value="Resolved" {% if x.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+            <td class="desc-cell">{{ x.description }}</td>
+            <td class="status-cell">
+              <div class="dropdown-wrapper">
+                <select class="status-dropdown form-select form-select-sm" data-id="{{ x.id }}">
+                  <option value="Pending" {% if x.status == 'Pending' %}selected{% endif %}>Pending</option>
+                  <option value="In Progress" {% if x.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                  <option value="Resolved" {% if x.status == 'Resolved' %}selected{% endif %}>Resolved</option>
                 </select>
+              </div>
             </td>
-
             <td>{{ x.created_at }}</td>
             <td>{{ x.updated_at }}</td>
-        </tr>
-        {% empty %}
-        <tr>
-            <td colspan="8" style="text-align:center;">No complaints submitted</td>
-        </tr>
-        {% endfor %}
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="text-center">No complaints submitted</td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
+
+  </div>
 </div>
 
 <style>
-    /* Optional styling for table */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: center;
-    }
-    th {
-        background-color: #f4f4f4;
-    }
+  body {
+    background-color: #f0f4fa;
+  }
 
-    /* Color for each status */
-    .status-dropdown {
-        padding: 5px;
-        border-radius: 5px;
-        font-weight: bold;
-    }
-    .status-pending {
-        background-color: #fff3cd; /* yellow */
-        color: #856404;
-    }
-    .status-in-progress {
-        background-color: #cce5ff; /* blue */
-        color: #004085;
-    }
-    .status-resolved {
-        background-color: #d4edda; /* green */
-        color: #155724;
-    }
+  /* Back Arrow */
+  .back-arrow {
+    font-size: 28px;
+    color: #003366;
+    text-decoration: none !important;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    transition: color 0.2s ease-in-out;
+    z-index: 10;
+  }
+  .back-arrow:hover {
+    color: #001f4d;
+  }
+
+  /* Page layout */
+  .page-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+
+  .content-box {
+    width: 95%;
+    max-width: 1200px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  }
+
+  /* Table styling */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  th {
+    background-color: #003366;
+    color: #fff;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: top;
+    padding: 10px;
+  }
+
+  .desc-cell {
+    text-align: left !important;
+    white-space: pre-wrap;
+  }
+
+  /* Fix dropdown clipping */
+  .dropdown-wrapper {
+    position: relative;
+    overflow: visible;
+  }
+
+  .status-dropdown {
+    font-weight: 600;
+    border-radius: 6px;
+    min-width: 120px;
+    z-index: 5;
+  }
+
+  /* Status colors */
+  .status-pending {
+    background-color: #fff4cc !important;
+    color: #8a6d3b !important;
+  }
+  .status-in-progress {
+    background-color: #cfe2ff !important;
+    color: #084298 !important;
+  }
+  .status-resolved {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+  }
+
+  /* Subtle hover */
+  tbody tr:hover {
+    background-color: #f8f9fa;
+  }
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-  // Function to apply color based on status
   function applyStatusColor(dropdown) {
     dropdown.classList.remove('status-pending', 'status-in-progress', 'status-resolved');
     const value = dropdown.value;
@@ -104,10 +170,8 @@ document.addEventListener("DOMContentLoaded", function() {
     if (value === 'Resolved') dropdown.classList.add('status-resolved');
   }
 
-  // Apply initial colors
   document.querySelectorAll(".status-dropdown").forEach(applyStatusColor);
 
-  // Handle change event
   document.querySelectorAll(".status-dropdown").forEach(dropdown => {
     dropdown.addEventListener("change", function() {
       const complaintId = this.getAttribute("data-id");
@@ -129,7 +193,6 @@ document.addEventListener("DOMContentLoaded", function() {
         if (data.success) {
           const updatedAtCell = document.querySelector(`tr[data-id='${complaintId}'] td:last-child`);
           if (updatedAtCell) updatedAtCell.textContent = data.updated_at;
-          alert("✅ Status updated to: " + data.new_status);
         } else {
           alert("❌ Failed to update status: " + (data.error || "Unknown error"));
         }
