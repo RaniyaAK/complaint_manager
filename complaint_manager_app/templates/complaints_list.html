@@ -4,18 +4,14 @@
 {% block title %}Complaints{% endblock %}
 
 {% block content %}
-<!-- Back Arrow (top-left corner) -->
 <a href="{% url 'admin_dashboard' %}" 
    class="text-decoration-none position-absolute top-0 start-0 m-4"
    style="font-weight: bold; font-size: 1.8rem; color:#003366;">←</a>
 
-<!-- Centered Content -->
 <div class="d-flex flex-column align-items-center justify-content-center py-5" style="min-height: 100vh; background-color: #f5f8ff;">
 
-  <!-- Heading -->
   <h1 class="fw-bold mb-5" style="color:#003366;">Registered Complaints</h1>
 
-  <!-- Complaints Container -->
   <div class="w-100 d-flex flex-column align-items-center">
     {% if page_obj %}
       {% for x in page_obj %}
@@ -35,7 +31,6 @@
     {% endif %}
   </div>
 
-  <!-- Pagination -->
   <div class="d-flex justify-content-center align-items-center mt-4 fs-5">
     {% if page_obj.has_previous %}
       <a href="?page={{ page_obj.previous_page_number }}" class="text-decoration-none me-4" style="color:#003366;">←</a>

@@ -5,7 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import ComplaintForm,LoginForm
 from .models import Complaint
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
@@ -60,7 +59,6 @@ def login_view(request):
     return render(request, 'login.html',{'form':form, 'error_message':error_message})
 
 
-# passwords
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -94,7 +92,7 @@ def reset_password(request, email):
     return render(request, 'reset_password.html', {'email': email, 'success': success})
 
 
-# logout
+
 @login_required
 def logout_view(request):
     auth_logout(request)
@@ -116,7 +114,7 @@ def all_complaints(request):
     return render(request, 'all_complaints.html', {"username": request.user.username})
 
 
-# user
+
 @login_required(login_url='login')
 def user_dashboard(request):
     return render(request, 'user_dashboard.html', {"username": request.user.username})
@@ -150,11 +148,10 @@ def submitted_complaints(request):
 
 @login_required
 def all_complaints(request):
-    mycomplaints = Complaint.objects.all()  # all complaints for admin
+    mycomplaints = Complaint.objects.all() 
     return render(request, 'all_complaints.html', {'mycomplaints': mycomplaints})
 
 
-# user
 @login_required(login_url='login')
 def success(request):
     return render(request, 'success.html', {"username": request.user.username})
@@ -169,7 +166,7 @@ def update_status(request, complaint_id):
         try:
             complaint = Complaint.objects.get(id=complaint_id)
             complaint.status = new_status
-            complaint.save()  # This will automatically update `updated_at`
+            complaint.save() 
 
             return JsonResponse({
                 "success": True,
@@ -183,10 +180,8 @@ def update_status(request, complaint_id):
 
 @login_required
 def complaints_list(request):
-    # Fetch all complaints (only subject & description shown)
-    complaints = Complaint.objects.all().order_by('-id')  # latest first
+    complaints = Complaint.objects.all().order_by('-id')  
 
-    # Pagination setup (5 complaints per page)
     paginator = Paginator(complaints, 1)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

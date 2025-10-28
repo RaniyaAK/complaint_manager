@@ -5,7 +5,6 @@
 
 {% block content %}
 
-<!-- Back Arrow -->
 <a href="{% url 'admin_dashboard' %}" class="back-arrow">←</a>
 
 <div class="page-wrapper d-flex align-items-center justify-content-center min-vh-100">
@@ -101,7 +100,6 @@
     box-shadow: 0 0 20px rgba(0,0,0,0.1);
   }
 
-  /* Table styling */
   table {
     border-collapse: collapse;
     width: 100%;
@@ -138,7 +136,6 @@
     z-index: 5;
   }
 
-  /* Status colors */
   .status-pending {
     background-color: #fff4cc !important;
     color: #8a6d3b !important;
@@ -152,7 +149,6 @@
     color: #0f5132 !important;
   }
 
-  /* Subtle hover */
   tbody tr:hover {
     background-color: #f8f9fa;
   }
@@ -194,12 +190,12 @@ document.addEventListener("DOMContentLoaded", function() {
           const updatedAtCell = document.querySelector(`tr[data-id='${complaintId}'] td:last-child`);
           if (updatedAtCell) updatedAtCell.textContent = data.updated_at;
         } else {
-          alert("❌ Failed to update status: " + (data.error || "Unknown error"));
+          alert(" Failed to update status: " + (data.error || "Unknown error"));
         }
       })
       .catch(err => {
         console.error("Error:", err);
-        alert("⚠️ Something went wrong while updating status.");
+        alert(" Something went wrong while updating status.");
       });
     });
   });

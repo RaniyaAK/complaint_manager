@@ -4,14 +4,60 @@
 {% block title %}Complaint Registration Form{% endblock %}
 
 {% block content %}
+
+
+<a href="{% url 'user_dashboard' %}" class="back-arrow">←</a>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            Complaint Registration Form
+        </div>
+
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger mt-3">{{ error }}</div>
+                {% endfor %}
+
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="reset" class="btn btn-secondary me-2">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <style>
     body {
-        background-color: #f5f8ff; /* light blue-gray background */
+        background-color: #f5f8ff; 
     }
 
     .back-arrow {
         font-size: 1.8rem;
-        color: #003366; /* main government blue */
+        color: #003366; 
         text-decoration: none;
         font-weight: bold;
         margin-left: 30px;
@@ -76,47 +122,4 @@
     }
 </style>
 
-<a href="{% url 'user_dashboard' %}" class="back-arrow">←</a>
-
-<div class="container mt-4">
-    <div class="card">
-        <div class="card-header">
-            Complaint Registration Form
-        </div>
-
-        <div class="card-body">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-
-            <form method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                {% for field in form %}
-                    <div class="mb-3">
-                        {{ field.label_tag }}
-                        {{ field }}
-                        {% for error in field.errors %}
-                            <div class="text-danger small">{{ error }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-
-                {% for error in form.non_field_errors %}
-                    <div class="alert alert-danger mt-3">{{ error }}</div>
-                {% endfor %}
-
-                <div class="d-flex justify-content-end mt-4">
-                    <button type="reset" class="btn btn-secondary me-2">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 {% endblock %}
