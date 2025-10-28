@@ -5,10 +5,9 @@
 
 {% block content %}
 
-
 <a href="{% url 'user_dashboard' %}" class="back-arrow">←</a>
 
-<div class="container mt-4">
+<div class="form-wrapper">
     <div class="card">
         <div class="card-header">
             Complaint Registration Form
@@ -52,12 +51,16 @@
 
 <style>
     body {
-        background-color: #f5f8ff; 
+        background-color: #f5f8ff;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
     }
 
     .back-arrow {
         font-size: 1.8rem;
-        color: #003366; 
+        color: #003366;
         text-decoration: none;
         font-weight: bold;
         margin-left: 30px;
@@ -69,9 +72,17 @@
         color: #00264d;
     }
 
+    /* NEW: wrapper for vertical + horizontal centering */
+    .form-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     .card {
         max-width: 700px;
-        margin: 50px auto;
+        width: 100%;
         border: none;
         border-radius: 10px;
         box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
@@ -79,7 +90,7 @@
     }
 
     .card-header {
-        background-color: #003366; /* government deep blue */
+        background-color: #003366;
         color: white;
         text-align: center;
         padding: 20px;

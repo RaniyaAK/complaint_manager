@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -8,8 +8,6 @@ from .models import Complaint
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
-from django.shortcuts import render
-from .models import Complaint
 
 
 def register(request):
@@ -105,15 +103,11 @@ def admin_dashboard(request):
         return redirect('user_dashboard')
 
 
-@login_required(login_url='login')
-def all_complaints(request):
-    return render(request, 'all_complaints.html', {"username": request.user.username})
-
-
 @login_required
 def all_complaints(request):
-    mycomplaints = Complaint.objects.all() 
+    mycomplaints = Complaint.objects.all().order_by('-created_at')
     return render(request, 'all_complaints.html', {'mycomplaints': mycomplaints})
+
 
 
 @login_required
@@ -136,23 +130,18 @@ def user_dashboard(request):
 
 @login_required
 def complaint_registration_form(request):
-    message = None  
-
     if request.method == 'POST':
         form = ComplaintForm(request.POST)
         if form.is_valid():
-            complaint = form.save(commit = False)
+            complaint = form.save(commit=False)
             complaint.user = request.user
             complaint.save()
             return redirect('success')
-
     else:
         form = ComplaintForm()
 
-    return render(request, 'complaint_registration_form.html', {
-        'form': form,
-        'message': message
-    })
+    return render(request, 'complaint_registration_form.html', {'form': form})
+
 
 @login_required
 def submitted_complaints(request):
@@ -167,16 +156,17 @@ def success(request):
 
 
 
-@csrf_exempt
 @login_required
 def update_status(request, complaint_id):
+    if not request.user.is_superuser:
+        return JsonResponse({"success": False, "error": "Unauthorized"}, status=403)
+    
     if request.method == "POST":
         new_status = request.POST.get("status")
         try:
             complaint = Complaint.objects.get(id=complaint_id)
             complaint.status = new_status
-            complaint.save() 
-
+            complaint.save()
             return JsonResponse({
                 "success": True,
                 "new_status": complaint.status,
@@ -184,7 +174,9 @@ def update_status(request, complaint_id):
             })
         except Complaint.DoesNotExist:
             return JsonResponse({"success": False, "error": "Complaint not found"})
+    
     return JsonResponse({"success": False, "error": "Invalid request"})
+
 
 
 @login_required
