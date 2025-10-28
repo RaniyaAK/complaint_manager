@@ -94,11 +94,6 @@ def reset_password(request, email):
 
 
 @login_required
-def logout_view(request):
-    auth_logout(request)
-    return redirect('login')
-
-@login_required
 def admin_dashboard(request):
     if request.user.is_superuser:
         complaints = Complaint.objects.all().order_by('-created_at')
@@ -109,9 +104,27 @@ def admin_dashboard(request):
     else:
         return redirect('user_dashboard')
 
+
 @login_required(login_url='login')
 def all_complaints(request):
     return render(request, 'all_complaints.html', {"username": request.user.username})
+
+
+@login_required
+def all_complaints(request):
+    mycomplaints = Complaint.objects.all() 
+    return render(request, 'all_complaints.html', {'mycomplaints': mycomplaints})
+
+
+@login_required
+def complaints_list(request):
+    complaints = Complaint.objects.all().order_by('-id')  
+
+    paginator = Paginator(complaints, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'complaints_list.html', {'page_obj': page_obj})
 
 
 
@@ -146,10 +159,6 @@ def submitted_complaints(request):
     mycomplaints = Complaint.objects.filter(user=request.user)
     return render(request, 'submitted_complaints.html', {"mycomplaints": mycomplaints})
 
-@login_required
-def all_complaints(request):
-    mycomplaints = Complaint.objects.all() 
-    return render(request, 'all_complaints.html', {'mycomplaints': mycomplaints})
 
 
 @login_required(login_url='login')
@@ -179,11 +188,6 @@ def update_status(request, complaint_id):
 
 
 @login_required
-def complaints_list(request):
-    complaints = Complaint.objects.all().order_by('-id')  
-
-    paginator = Paginator(complaints, 1)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'complaints_list.html', {'page_obj': page_obj})
+def logout_view(request):
+    auth_logout(request)
+    return redirect('login')
