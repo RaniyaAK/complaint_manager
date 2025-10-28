@@ -15,23 +15,24 @@
 
     <div class="card-body bg-light">
       <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle">
+        <table class="table table-bordered text-start align-top">
           <thead class="table-primary">
             <tr>
               <th>No.</th>
-              <th>Subject</th>
+              <th>Date</th>
+              <th>Title</th>
               <th>Description</th>
               <th>Status</th>
-              <th>Created</th>
-              <th>Updated</th>
+              <th>Updated On</th>
             </tr>
           </thead>
           <tbody>
             {% for x in mycomplaints %}
             <tr>
               <td>{{ x.id }}</td>
+              <td>{{ x.created_at }}</td>
               <td>{{ x.subject }}</td>
-              <td class="text-start">{{ x.description }}</td>
+              <td>{{ x.description }}</td>
 
               <td class="
                 {% if x.status|lower == 'pending' %}bg-warning text-dark fw-bold{% endif %}
@@ -41,7 +42,6 @@
                 {{ x.status }}
               </td>
 
-              <td>{{ x.created_at }}</td>
               <td>{{ x.updated_at }}</td>
             </tr>
             {% empty %}
@@ -71,6 +71,13 @@ body {
 
 .back-arrow:hover {
   color: #0b1d33;
+}
+
+/* Top-left alignment for all table cells */
+.table th,
+.table td {
+  vertical-align: top !important;
+  text-align: left !important;
 }
 </style>
 
