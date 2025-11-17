@@ -154,29 +154,47 @@ def submitted_complaints(request):
 def success(request):
     return render(request, 'success.html', {"username": request.user.username})
 
-
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Complaint
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from .models import Complaint
 
 @login_required
 def update_status(request, complaint_id):
+    # Only superusers (admin) can update status
     if not request.user.is_superuser:
         return JsonResponse({"success": False, "error": "Unauthorized"}, status=403)
-    
+
     if request.method == "POST":
         new_status = request.POST.get("status")
         try:
             complaint = Complaint.objects.get(id=complaint_id)
-            complaint.status = new_status
+
+            # Logic: Prevent backward status
+            current_status = complaint.status.lower()
+
+            if current_status == "resolved":
+                return JsonResponse({"success": False, "error": "Complaint already resolved"})
+            elif current_status == "in_progress" and new_status.lower() == "pending":
+                return JsonResponse({"success": False, "error": "Cannot revert to pending"})
+
+            # Save new status
+            complaint.status = new_status.lower()
             complaint.save()
+
             return JsonResponse({
                 "success": True,
                 "new_status": complaint.status,
                 "updated_at": complaint.updated_at.strftime("%b %d, %Y %H:%M"),
             })
+
         except Complaint.DoesNotExist:
             return JsonResponse({"success": False, "error": "Complaint not found"})
-    
-    return JsonResponse({"success": False, "error": "Invalid request"})
 
+    return JsonResponse({"success": False, "error": "Invalid request"})
 
 
 @login_required

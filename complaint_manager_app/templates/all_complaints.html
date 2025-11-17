@@ -24,7 +24,7 @@
             <th>Email</th>
             <th>Subject</th>
             <th>Details</th>
-            <th>Current Status</th>
+            <th>Status</th>
             <th>Submitted On</th>
             <th>Last Updated</th>
           </tr>
@@ -38,13 +38,19 @@
             <td>{{ x.subject }}</td>
             <td class="desc-cell">{{ x.description }}</td>
             <td class="status-cell">
-              <div class="dropdown-wrapper">
+              {% if x.status|lower == "resolved" %}
+                <span class="status-resolved">Resolved</span>
+              {% else %}
                 <select class="status-dropdown form-select form-select-sm" data-id="{{ x.id }}">
-                  <option value="Pending" {% if x.status == 'Pending' %}selected{% endif %}>Pending</option>
-                  <option value="In Progress" {% if x.status == 'In Progress' %}selected{% endif %}>In Progress</option>
-                  <option value="Resolved" {% if x.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                  {% if x.status|lower == "pending" %}
+                    <option value="in_progress">In Progress</option>
+                    <option value="resolved">Resolved</option>
+                  {% elif x.status|lower == "in_progress" %}
+                    <option value="resolved">Resolved</option>
+                  {% endif %}
+                  <option value="{{ x.status }}" selected hidden>{{ x.status|capfirst }}</option>
                 </select>
-              </div>
+              {% endif %}
             </td>
             <td>{{ x.created_at }}</td>
             <td>{{ x.updated_at }}</td>
@@ -62,117 +68,56 @@
 </div>
 
 <style>
-  body {
-    background-color: #f0f4fa;
-  }
+  body { background-color: #f0f4fa; }
+  .back-arrow { font-size: 28px; color: #003366; text-decoration: none !important; position: absolute; top: 25px; left: 25px; transition: color 0.2s ease-in-out; z-index: 10; }
+  .back-arrow:hover { color: #001f4d; }
 
-  /* Back Arrow */
-  .back-arrow {
-    font-size: 28px;
-    color: #003366;
-    text-decoration: none !important;
-    position: absolute;
-    top: 25px;
-    left: 25px;
-    transition: color 0.2s ease-in-out;
-    z-index: 10;
-  }
-  .back-arrow:hover {
-    color: #001f4d;
-  }
+  .page-wrapper { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 50px 0; }
+  .content-box { width: 95%; max-width: 1200px; background-color: #fff; border-radius: 12px; padding: 40px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
 
-  /* Page layout */
-  .page-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding-top: 50px;
-    padding-bottom: 50px;
-  }
+  table { border-collapse: collapse; width: 100%; }
+  th { background-color: #003366; color: #fff; text-align: center; vertical-align: middle; }
+  td { text-align: center; vertical-align: top; padding: 10px; }
+  .desc-cell { text-align: left !important; white-space: pre-wrap; }
 
-  .content-box {
-    width: 95%;
-    max-width: 1200px;
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 40px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
-  }
+  .status-dropdown { font-weight: 600; border-radius: 6px; min-width: 120px; z-index: 5; }
 
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
+  /* Option colors */
+  .status-dropdown option[value="pending"] { background-color: #fff4cc; color: #8a6d3b; }
+  .status-dropdown option[value="in_progress"] { background-color: #cfe2ff; color: #084298; }
+  .status-dropdown option[value="resolved"] { background-color: #d1e7dd; color: #0f5132; }
 
-  th {
-    background-color: #003366;
-    color: #fff;
-    text-align: center;
-    vertical-align: middle;
-  }
+  .status-resolved { font-weight: 600; background-color: #d1e7dd; color: #0f5132; padding: 2px 8px; border-radius: 6px; display:inline-block; }
 
-  td {
-    text-align: center;
-    vertical-align: top;
-    padding: 10px;
-  }
-
-  .desc-cell {
-    text-align: left !important;
-    white-space: pre-wrap;
-  }
-
-  /* Fix dropdown clipping */
-  .dropdown-wrapper {
-    position: relative;
-    overflow: visible;
-  }
-
-  .status-dropdown {
-    font-weight: 600;
-    border-radius: 6px;
-    min-width: 120px;
-    z-index: 5;
-  }
-
-  .status-pending {
-    background-color: #fff4cc !important;
-    color: #8a6d3b !important;
-  }
-  .status-in-progress {
-    background-color: #cfe2ff !important;
-    color: #084298 !important;
-  }
-  .status-resolved {
-    background-color: #d1e7dd !important;
-    color: #0f5132 !important;
-  }
-
-  tbody tr:hover {
-    background-color: #f8f9fa;
-  }
+  tbody tr:hover { background-color: #f8f9fa; }
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-  function applyStatusColor(dropdown) {
-    dropdown.classList.remove('status-pending', 'status-in-progress', 'status-resolved');
-    const value = dropdown.value;
-    if (value === 'Pending') dropdown.classList.add('status-pending');
-    if (value === 'In Progress') dropdown.classList.add('status-in-progress');
-    if (value === 'Resolved') dropdown.classList.add('status-resolved');
+  function updateDropdownColor(dropdown) {
+    const value = dropdown.value.toLowerCase();
+    if (value === "pending") {
+      dropdown.style.backgroundColor = "#fff4cc";
+      dropdown.style.color = "#8a6d3b";
+    } else if (value === "in_progress") {
+      dropdown.style.backgroundColor = "#cfe2ff";
+      dropdown.style.color = "#084298";
+    } else if (value === "resolved") {
+      dropdown.style.backgroundColor = "#d1e7dd";
+      dropdown.style.color = "#0f5132";
+    }
   }
 
-  document.querySelectorAll(".status-dropdown").forEach(applyStatusColor);
-
   document.querySelectorAll(".status-dropdown").forEach(dropdown => {
+    updateDropdownColor(dropdown); // initial color
+
     dropdown.addEventListener("change", function() {
+      updateDropdownColor(this);
+
       const complaintId = this.getAttribute("data-id");
       const newStatus = this.value;
-      applyStatusColor(this);
 
       const url = "{% url 'update_status' 0 %}".replace("0", complaintId);
 
@@ -189,14 +134,22 @@ document.addEventListener("DOMContentLoaded", function() {
         if (data.success) {
           const updatedAtCell = document.querySelector(`tr[data-id='${complaintId}'] td:last-child`);
           if (updatedAtCell) updatedAtCell.textContent = data.updated_at;
+
+          if (newStatus.toLowerCase() === "resolved") {
+            const cell = document.querySelector(`tr[data-id='${complaintId}'] td.status-cell`);
+            cell.innerHTML = `<span class="status-resolved">Resolved</span>`;
+          } else {
+            // Remove selected option so it cannot be chosen again
+            const options = Array.from(this.options);
+            options.forEach(opt => {
+              if (opt.value.toLowerCase() === newStatus.toLowerCase()) opt.remove();
+            });
+          }
         } else {
-          alert(" Failed to update status: " + (data.error || "Unknown error"));
+          console.warn("Status update failed: " + (data.error || "Unknown error"));
         }
       })
-      .catch(err => {
-        console.error("Error:", err);
-        alert(" Something went wrong while updating status.");
-      });
+      .catch(err => console.error("Error:", err));
     });
   });
 });

@@ -18,7 +18,6 @@
         <table class="table table-bordered text-start align-top">
           <thead class="table-primary">
             <tr>
-              <th>No.</th>
               <th>Date</th>
               <th>Title</th>
               <th>Description</th>
@@ -29,17 +28,18 @@
           <tbody>
             {% for x in mycomplaints %}
             <tr>
-              <td>{{ x.id }}</td>
               <td>{{ x.created_at }}</td>
               <td>{{ x.subject }}</td>
               <td>{{ x.description }}</td>
 
-              <td class="
-                {% if x.status|lower == 'pending' %}bg-warning text-dark fw-bold{% endif %}
-                {% if x.status|lower == 'in progress' or x.status|lower == 'in_progress' %}bg-info text-white fw-bold{% endif %}
-                {% if x.status|lower == 'resolved' %}bg-success text-white fw-bold{% endif %}
-              ">
-                {{ x.status }}
+              <td>
+                {% if x.status|lower == 'pending' %}
+                  <span class="status-badge bg-warning text-dark fw-bold">Pending</span>
+                {% elif x.status|lower == 'in progress' or x.status|lower == 'in_progress' %}
+                  <span class="status-badge bg-info text-white fw-bold">In Progress</span>
+                {% elif x.status|lower == 'resolved' %}
+                  <span class="status-badge bg-success text-white fw-bold">Resolved</span>
+                {% endif %}
               </td>
 
               <td>{{ x.updated_at }}</td>
@@ -77,6 +77,13 @@ body {
 .table td {
   vertical-align: top !important;
   text-align: left !important;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  border-radius: 0.35rem;
+  font-size: 0.875rem;
 }
 </style>
 

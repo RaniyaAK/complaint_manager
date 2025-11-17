@@ -3,7 +3,6 @@ from .models import Complaint
 from django.contrib.auth.models import User
 
 
-
 class UserForm(forms.ModelForm):
     first_name = forms.CharField(widget=forms.TextInput)
     last_name = forms.CharField(widget=forms.TextInput)
